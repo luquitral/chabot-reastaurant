@@ -50,6 +50,7 @@ def construir_cadena():
          "reconfortantes o calientes, siempre que sea coherente con la petición del comensal.\n\n"
          "Instrucciones de formato:\n{format_instructions}"),
         ("human",
+         "Condición climática actual:\n{clima}\n\n"
          "Contexto de la carta disponible:\n{context}\n\n"
          "Consulta del comensal: {query}")
     ]).partial(format_instructions=parser.get_format_instructions())
