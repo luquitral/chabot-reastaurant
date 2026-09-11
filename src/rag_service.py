@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, List
 from langchain_core.documents import Document
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 def cargar_documentos_desde_json(ruta_json: Path) -> List[Document]:
@@ -59,7 +59,8 @@ def inicializar_vector_store(ruta_json: Path):
     documentos = cargar_documentos_desde_json(ruta_json)
     # Modelo de embeddings local ligero y de baja latencia
     embedding_model = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={"token": False}
     )
     vector_db = FAISS.from_documents(documentos, embedding_model)
     return vector_db.as_retriever(search_kwargs={"k": 2})

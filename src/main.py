@@ -1,17 +1,20 @@
 """Punto de entrada del asistente gastronomico."""
 import os
 import time
+import warnings
+warnings.filterwarnings("ignore")
 from pathlib import Path
 from typing import List, Optional
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 
 from rag_service import inicializar_vector_store
-
+from clima_service import obtener_clima_actual
 # Cargar variables de entorno (.env)
 load_dotenv()
 
@@ -42,6 +45,9 @@ def construir_cadena():
          "Recomienda la mejor opción basándote EXCLUSIVAMENTE en el contexto provisto de la carta.\n"
          "REGLA CRÍTICA DE SEGURIDAD: Revisa rigurosamente las alergias y restricciones dietéticas (celiaquía, vegetarianismo).\n"
          "Si un plato contiene un alérgeno incompatible con la petición, queda estrictamente descartado.\n\n"
+         "Considera también el clima actual como criterio secundario: en días calurosos"
+         "prioriza platos/bebidas frescos o ligeros; en días fríos o lluviosos prioriza opciones \n"
+         "reconfortantes o calientes, siempre que sea coherente con la petición del comensal.\n\n"
          "Instrucciones de formato:\n{format_instructions}"),
         ("human",
          "Contexto de la carta disponible:\n{context}\n\n"
@@ -64,6 +70,9 @@ def main():
 
     print("Sistema listo. Escribe tu consulta (o 'salir' para finalizar):\n")
 
+    clima_actual = obtener_clima_actual()
+    print(f"{clima_actual}\n")
+
     while True:
         try:
             consulta = input("Comensal > ").strip()
@@ -82,6 +91,7 @@ def main():
             # Inferencia y validación de esquema
             resultado: RecomendacionGastronomica = cadena.invoke({
                 "context": contexto,
+                "clima": clima_actual,
                 "query": consulta
             })
 
