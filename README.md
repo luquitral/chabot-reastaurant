@@ -1,4 +1,4 @@
-# Chatbot de Restaurante — Asistente Gastronómico con RAG (EP1 ISY0101)
+# Chatbot de Restaurante — Asistente Gastronómico con RAG 
 
 Asistente conversacional de consola que recomienda platos de un restaurante combinando:
 - una **fuente interna** (la carta del restaurante, vectorizada con FAISS), y
